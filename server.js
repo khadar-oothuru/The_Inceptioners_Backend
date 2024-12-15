@@ -8,7 +8,7 @@ const adminRoutes = require("./routes/admin");
 
 connectDB();
 const app = express();
-app.options("*", cors()); // Allow preflight requests
+app.use(cors()); 
 
 app.use(express.json());
 
