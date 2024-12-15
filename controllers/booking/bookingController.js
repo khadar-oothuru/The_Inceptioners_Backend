@@ -1,63 +1,18 @@
-// const Booking = require("../../model/booking");
-// const Package = require("../../model/package");
-
-// const bookingController = async (req, res) => {
-//     try {
-//         const { name, email, phone, travelers, specialRequests, packageId } = req.body;
-
-//         console.log("Incoming Request:", req.body);
-
-//         // Find package by ID
-//         const pkg = await Package.findById(packageId);
-//         if (!pkg) {
-//             return res.status(404).json({ message: 'Package not found' });
-//         }
-
-//         const totalPrice = travelers * pkg.price;
-
-//         const booking = new Booking({
-//             name,
-//             email,
-//             phone,
-//             travelers,
-//             specialRequests,
-//             package: pkg._id,
-//             totalPrice,
-//         });
-
-//         console.log("Saving Booking...");
-//         await booking.save();
-
-//         res.json({ message: 'Booking successful', booking });
-//     } catch (error) {
-//         console.error("Error:", error);
-
-//         // Handle duplicate email error
-//         if (error.code === 11000) {
-//             const field = Object.keys(error.keyValue)[0];
-//             return res.status(400).json({ message: `${field} already exists` });
-//         }
-
-//         res.status(500).json({ message: 'Server error', error: error.message });
-//     }
-// };
-
-// module.exports = {
-//     bookingController,
-// };
-                       
-
-
 const Booking = require("../../model/booking");
 const Package = require("../../model/package");
 
 const bookingController = async (req, res) => {
     try {
-        const { name, email, phone, travelers, specialRequests, packageId } = req.body;
+        const { name, emails, phone, travelers, specialRequests, packageId } = req.body;
 
         // Validate inputs
-        if (!name || !email || !phone || !travelers || !packageId) {
+        if (!name || !emails || !phone || !travelers || !packageId) {
             return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        // Validate that emails is an array and contains valid email addresses
+        if (!Array.isArray(emails) || emails.some(email => !/\S+@\S+\.\S+/.test(email))) {
+            return res.status(400).json({ message: 'Emails must be a valid array of email addresses' });
         }
 
         const parsedTravelers = parseInt(travelers, 10);
@@ -79,7 +34,7 @@ const bookingController = async (req, res) => {
         // Create and save the booking
         const booking = new Booking({
             name,
-            email,
+            emails, // Store the array of emails
             phone,
             travelers: parsedTravelers,
             specialRequests,

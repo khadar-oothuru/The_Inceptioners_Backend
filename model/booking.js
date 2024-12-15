@@ -7,19 +7,22 @@ const BookingSchema = new mongoose.Schema(
       required: [true, "Name is required"],
       trim: true,
     },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-
-      match: [
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-        "Please provide a valid email address",
-      ],
+    emails: {
+      type: [String],
+      required: [true, "At least one email is required"],
+      validate: {
+        validator: function (value) {
+          return value.every(
+            (email) =>
+              /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)
+          );
+        },
+        message: "Please provide valid email addresses",
+      },
     },
     phone: {
       type: String,
       required: [true, "Phone number is required"],
-
       match: [/^\d{10}$/, "Phone number must be a 10-digit number"],
     },
     travelers: {
