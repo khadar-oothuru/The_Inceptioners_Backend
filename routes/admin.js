@@ -19,7 +19,7 @@ router.get('/bookings', getAllBookings);
 // Package Routes
 router.get('/packages', get_all_packages); // Get all packages
 router.get('/packages/:id', get_single_package); // Get a single package by ID
-router.post('/packages', addPackage); // Add a new package
+router.post('/addpackages', addPackage); // Add a new package
 router.put('/packages/:id', updatePackage); // Update a package by ID
 router.delete('/packages/:id', deletePackage); // Delete a package by ID
 
