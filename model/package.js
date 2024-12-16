@@ -21,13 +21,10 @@ const PackageSchema = new mongoose.Schema({
     availableDates: {
         type: [String],
         required: [true, "At least one available date is required"],
-        validate: {
-            validator: function (dates) {
-                return dates.every(date => !isNaN(Date.parse(date)));
-            },
+       
             message: "All dates must be in a valid format (e.g., YYYY-MM-DD)",
         },
-    },
+    
     image: {
         type: String,
         required: [true, "Image URL is required"],
@@ -41,3 +38,7 @@ const PackageSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Package', PackageSchema);
+
+
+
+
