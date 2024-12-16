@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const BookingSchema = new mongoose.Schema(
   {
     name: {
@@ -8,7 +7,7 @@ const BookingSchema = new mongoose.Schema(
       required: [true, "Name is required"],
       trim: true,
     },
-    email: { // Change from `emails` to `email`
+    email: {
       type: String,
       required: [true, "Email is required"],
       validate: {
@@ -40,19 +39,28 @@ const BookingSchema = new mongoose.Schema(
     },
     packageTitle: {
       type: String,
-      required: true, // Automatically filled, not required from the user
+      required: true,
     },
     totalPrice: {
       type: Number,
       required: [true, "Total price is required"],
       min: [0, "Total price must be a positive number"],
     },
+    selectedDate: {
+      type: String,
+      required: [true, "Selected date is required"],
+      validate: {
+        validator: function (date) {
+          return !isNaN(Date.parse(date));
+        },
+        message: "Selected date must be a valid date",
+      },
+    },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
-
-const Booking = mongoose.model('Booking', BookingSchema);
+const Booking = mongoose.model("Booking", BookingSchema);
 module.exports = Booking;

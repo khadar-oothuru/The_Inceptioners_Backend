@@ -3,16 +3,21 @@ const Package = require("../../model/package");
 
 const bookingController = async (req, res) => {
     try {
-        const { name, email, phone, travelers, specialRequests, packageId } = req.body;
+        const { name, email, phone, travelers, specialRequests, packageId, selectedDate } = req.body;
 
-        // Validate packageId and fetch package details
+        // Validate packageId
         if (!packageId) {
-            return res.status(400).json({ error: 'Package ID is required' });
+            return res.status(400).json({ error: "Package ID is required" });
         }
 
         const pkg = await Package.findById(packageId);
         if (!pkg) {
-            return res.status(404).json({ error: 'Package not found' });
+            return res.status(404).json({ error: "Package not found" });
+        }
+
+        // Validate selectedDate
+        if (!selectedDate || !pkg.availableDates.includes(selectedDate)) {
+            return res.status(400).json({ error: "Invalid or unavailable date selected" });
         }
 
         // Calculate total price
@@ -24,23 +29,20 @@ const bookingController = async (req, res) => {
             email,
             phone,
             travelers,
-            specialRequests: specialRequests || 'None', // Default to 'None'
+            specialRequests: specialRequests || "None",
             package: pkg._id,
-            packageTitle: pkg.title, // Derive package title
+            packageTitle: pkg.title,
             totalPrice,
+            selectedDate,
         });
 
-        // Save the booking
         const savedBooking = await booking.save();
 
-        // Respond with success message
-        res.status(201).json({ message: 'Booking successful', booking: savedBooking });
+        res.status(201).json({ message: "Booking successful", booking: savedBooking });
     } catch (error) {
-        // Handle errors
-        console.error('Error creating booking:', error);
-        res.status(500).json({ error: 'An error occurred while processing your booking' });
+        console.error("Error creating booking:", error);
+        res.status(500).json({ error: "An error occurred while processing your booking" });
     }
-}
+};
 
-
-module.exports = {bookingController}
+module.exports = { bookingController };
